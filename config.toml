@@ -2,3 +2,9 @@ baseURL = "http://easysipp.com/"
 languageCode = "en-us"
 title = "easySIPp - SIP Testing, Simplified."
 theme = "easysipp-hugo"
+
+[params]
+    categories = ["SIP Testing","SIPp XML","Telecom"]
+
+[taxonomies]
+  category = "categories"
