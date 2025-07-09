@@ -1,0 +1,4 @@
+baseURL = "http://easysipp.com/"
+languageCode = "en-us"
+title = "easySIPp - SIP Testing, Simplified."
+theme = "easysipp-hugo"
