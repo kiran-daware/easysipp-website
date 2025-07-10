@@ -6,11 +6,11 @@
     <!-- Hero Section -->
     <section id="hero" class="section-card text-center">
         <h2 class="section-title">
-            Simplify Your SIP/VoIP Testing
+            Simplify Your SIP Testing
         </h2>
         <p class="section-description">
-            easySIPp provides a powerful, web-based graphical user interface (GUI) for SIPp,
-            allowing you to effortlessly create, run, and visualize SIP/VoIP tests without writing complex command-line scripts.
+            <strong>easySIPp</strong> provides a powerful, web-based <strong>graphical user interface (GUI) for SIPp</strong>,<br>
+            allowing you to effortlessly create, run, and visualize <strong>SIP (Session Initiation Protocol) tests</strong> without writing complex command-line scripts.
         </p>
         <div class="button-group">
             <a href="#get-started" class="button button-primary">
@@ -27,11 +27,11 @@
         <h2 class="section-title">Overview</h2>
         <div class="section-content">
             <p>
-                SIPp is an excellent open-source tool for SIP performance testing, but its command-line interface can be daunting for many users.
-                <strong>easySIPp</strong> (also known as kSipP) bridges this gap by offering an intuitive, web-based GUI that makes SIP and VoIP testing accessible to everyone.
+                <a href="https://github.com/SIPp/sipp" target="_blank">SIPp</a> is an excellent open-source tool for SIP performance testing, but its command-line interface can be daunting for many users.
+                <strong>easySIPp</strong> bridges this gap by offering an intuitive, web-based GUI that makes SIP and VoIP testing accessible to everyone.
             </p>
             <p>
-                Built with Python (Django) for the backend and modern web technologies (JavaScript, HTML, CSS) for the frontend, easySIPp streamlines the entire testing workflow. Whether you're a VoIP tester, network engineer, or simply need to validate SIP functionality, easySIPp is designed to save you time and effort.
+                Built with Python for the backend and web technologies (JavaScript, HTML, CSS) for the frontend GUI, easySIPp streamlines the entire testing workflow. Whether you're a VoIP tester, network engineer, or simply need to validate SIP functionality, easySIPp is designed to save you time and effort.
             </p>
         </div>
     </section>
@@ -46,9 +46,9 @@
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                 </div>
                 <div>
-                    <h3 class="feature-title">Simplified Configuration</h3>
+                    <h3 class="feature-title">Simplified XML builder</h3>
                     <p class="feature-description">
-                        Easily create and edit SIPp XML scenarios through a user-friendly interface, eliminating the need for manual XML writing.
+                        Easily create and edit <strong>SIPp XML scenarios</strong> through a user-friendly interface, eliminating the need for manual XML writing.
                     </p>
                 </div>
             </div>
@@ -59,7 +59,7 @@
                 <div>
                     <h3 class="feature-title">Intuitive Interface</h3>
                     <p class="feature-description">
-                        A well-designed web GUI streamlines the process of defining SIP messages, call flows, and test parameters.
+                        A well-designed web GUI streamlines the process of defining SIP messages, call flows, and test parameters. <strong>Preveiw Call Flow Sequence diagram</strong> before running the tests.
                     </p>
                 </div>
             </div>
@@ -79,9 +79,9 @@
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                 </div>
                 <div>
-                    <h3 class="feature-title">Visualized Results</h3>
+                    <h3 class="feature-title">Real-time Results and Control</h3>
                     <p class="feature-description">
-                        Gain clear and concise insights into test outcomes through intuitive visualizations.
+                        Gain clear and concise insights into test outcomes with Real-time SIPp results. Also, easily control your running tests - i.e. increase CPS, decrease CPS, pause etc.
                     </p>
                 </div>
             </div>
@@ -92,7 +92,7 @@
                 <div>
                     <h3 class="feature-title">For Everyone</h3>
                     <p class="feature-description">
-                        Ideal for VoIP Testers and Network Engineers looking to simplify their SIP testing workflow.
+                        Ideal for SIP Testers and Telecom Engineers looking to simplify their SIP testing workflow.
                     </p>
                 </div>
             </div>
@@ -124,9 +124,7 @@ docker pull krndwr/ksipp
 docker run -dt --network host --name ksipp krndwr/ksipp
                 </code></pre>
             </div>
-            <p>Once your container is up and running, open your web browser and navigate to:</p>
-            <p class="link-text">
-                <a href="http://localhost:8080/" target="_blank">http://localhost:8080/</a>
+            <p>Once your container is up and running, open your web browser and navigate to: <code><b>http://localhost:8080/</b></code>
             </p>
             <p>
                 You can also replace <code>localhost</code> with your Linux/Docker IP address if you are running it on a remote machine.
