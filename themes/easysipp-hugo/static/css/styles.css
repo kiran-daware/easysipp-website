@@ -66,7 +66,7 @@ a:hover {
   display: flex;
   align-items: center;
   border-bottom: 4px solid var(--main-accent-orange-darker);
-  background: linear-gradient(to right, var(--main-accent-orange), var(--main-accent-orange-darker));
+  background: var(--dark-blue-grey-hover);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding: 0 1rem;
   border-bottom-left-radius: 0.75rem;
@@ -101,11 +101,11 @@ a:hover {
 }
 
 .klogo-easy {
-    color: #71695e;
+    color: var(--dark-blue-grey-hover);
 }
 
 .klogo-sipp {
-    color: #ff943f;
+    color: var(--main-accent-orange);
 }
 
 .klogo-tagline {
@@ -135,7 +135,7 @@ a:hover {
 }
 
 .menubar a.active {
-  background-color: var(--main-accent-orange-darker);
+  background-color: var(--main-accent-orange);
   color: white;
 }
 /* k-header navbar end */
