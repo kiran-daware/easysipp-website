@@ -1,0 +1,4 @@
+# Hugo ignores
+/public/
+/.hugo_build.lock
+.hugo_build.lock

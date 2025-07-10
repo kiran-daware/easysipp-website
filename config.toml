@@ -8,3 +8,7 @@ theme = "easysipp-hugo"
 
 [taxonomies]
   category = "categories"
+
+[caches]
+  [caches.images]
+    dir = ':cacheDir/images'
