@@ -75,7 +75,7 @@ Please ensure your changes align with the existing code style and website purpos
 
 ## License
 
-This project is open-source and licensed under the [MIT License](https://www.google.com/search?q=LICENSE).
+This project is open-source and licensed under the [MIT License](/LICENSE).
 
 ## Contact & Support
 
