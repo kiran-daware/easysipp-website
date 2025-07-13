@@ -141,8 +141,6 @@ a:hover {
 /* k-header navbar end */
 
 
-
-
 /* --- Main Content Area Wrapper (for all pages) --- */
 .main-content-wrapper { 
     flex-grow: 1;
@@ -184,7 +182,6 @@ a:hover {
     line-height: 1.25; 
     text-align: center;
 }
-
 
 /* --- Button Styles --- */
 .button {
@@ -783,7 +780,6 @@ a:hover {
 
 /* --- 404 Page Specific Styles --- */
 .error-404-container {
-    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -843,5 +839,6 @@ a:hover {
 .error-404-button:hover {
     transform: scale(1.05);
     background-color: var(--main-accent-orange-darker);
+    color: var(--white);
 }
 
