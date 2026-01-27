@@ -306,7 +306,7 @@ section {
 }
 
 .section-title {
-    font-size: clamp(2rem, 4vw, 2.5rem);
+    font-size: 2.1rem;
     font-weight: 700;
     margin-bottom: 1rem;
 }
@@ -931,7 +931,7 @@ section {
 }
 
 .page-title {
-    font-size: clamp(2.5rem, 5vw, 3rem);
+    font-size: 2.1rem;
     font-weight: 800;
     margin-bottom: 1rem;
 }
