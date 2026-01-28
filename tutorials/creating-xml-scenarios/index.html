@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Master creating SIPp XML scenarios in easySIPp and create complex SIPp scenarios without writing XML code.">
+    <meta name="keywords" content="SIPp, VoIP, SIP testing, telecom, testing tool, easySIPp">
+    <meta name="author" content="Kiran Daware">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Creating XML Scenarios - easySIPp Tutorial">
+    <meta property="og:description" content="Master creating SIPp XML scenarios in easySIPp and create complex SIPp scenarios without writing XML code.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://easysipp.com/tutorials/creating-xml-scenarios/">
+
+
+    <title>Creating XML Scenarios - easySIPp Tutorial</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container">
+            <div class="nav-content">
+                <a href="/" class="logo">
+                    <span class="logo-text">easySIPp</span>
+                    <span class="version-badge">SIP Testing, Simplified.</span>
+                </a>
+                
+                <div class="nav-links">
+                    <a href="/#features" class="nav-link">Features</a>
+                    <a href="/#screenshots" class="nav-link">Screenshots</a>
+                    <a href="/tutorials/" class="nav-link active">Tutorials</a>
+                    <a href="/#get-started" class="btn-nav">Get Started</a>
+                </div>
+                
+                <button class="mobile-menu-btn" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+    <!-- Navigation End-->
+    
+    <!-- Article Header -->
+    <section class="article-header">
+        <div class="container">
+            <div class="page-header">
+                <h1 class="page-title">Creating XML Scenarios</h1>
+                <p class="page-description">
+                    Master the visual XML builder and create complex SIPp scenarios with ease
+                </p>
+                <div class="article-meta">
+                    <span>⏱️ 15 min read</span>
+                    <span>🟡 Intermediate</span>
+                    <span>📅 January 27, 2025</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Article Content -->
+    <div class="article-content">
+        
+        <h2>Introduction</h2>
+        <p>
+            One of easySIPp's most powerful features is its visual XML scenario builder. Instead of manually writing SIPp XML files, 
+            you can create complex call flows through an intuitive point-and-click interface.
+        </p>
+        
+        <h2>Understanding SIPp XML Scenarios</h2>
+        
+        <p>SIPp XML scenarios define the sequence of SIP messages exchanged during a test. A typical scenario includes:</p>
+        <ul>
+            <li><strong>INVITE:</strong> Initiates a call</li>
+            <li><strong>100 Trying:</strong> Provisional response</li>
+            <li><strong>180 Ringing:</strong> Call is ringing</li>
+            <li><strong>200 OK:</strong> Call accepted</li>
+            <li><strong>ACK:</strong> Acknowledgment</li>
+            <li><strong>BYE:</strong> Terminates the call</li>
+        </ul>
+        
+        <blockquote>
+            <p><strong>Note:</strong> easySIPp includes predefined scenarios for common use cases, but you can create custom scenarios for specific testing needs.</p>
+        </blockquote>
+        
+        <h2>Accessing the XML Builder</h2>
+        
+        <p>There are two ways to access the visual XML builder:</p>
+        
+        <h3>Method 1: From easySIPp Interface</h3>
+        <ol>
+            <li>Click on the "Xml List" tab in the navigation</li>
+            <li>Browse available scenarios or click "Create Xml" to start a new one</li>
+        </ol>
+        
+        <h3>Method 2: Standalone XML Generator</h3>
+        <p>Visit the online tool at: <a href="https://kiran-daware.github.io/sipp-xml/" target="_blank">https://kiran-daware.github.io/sipp-xml/</a></p>
+        <p>This standalone version allows you to create scenarios and export them for use in easySIPp.</p>
+        
+        <h2>Creating Your First Custom Scenario</h2>
+        
+        <h3>Step 1: Define the Scenario Type</h3>
+        <p>Choose whether you're creating a:</p>
+        <ul>
+            <li><strong>UAC Scenario:</strong> Initiates calls (client behavior)</li>
+            <li><strong>UAS Scenario:</strong> Receives calls (server behavior)</li>
+        </ul>
+        
+        <h3>Step 2: Add SIP Messages</h3>
+        <p>Build your call flow by adding messages in sequence:</p>
+        
+        <p><strong>For UAC:</strong></p>
+        <ol>
+            <li>Click "Add Message" → Select "send"</li>
+            <li>Choose message type: INVITE</li>
+            <li>Configure headers (From, To, Contact, etc.)</li>
+            <li>Add SDP body if needed</li>
+        </ol>
+        
+        <p><strong>For UAS:</strong></p>
+        <ol>
+            <li>Click "Add Message" → Select "recv"</li>
+            <li>Choose message type: INVITE</li>
+            <li>Define expected headers (optional)</li>
+        </ol>
+        
+        <h3>Step 3: Add Responses</h3>
+        <p>After each request, add appropriate responses:</p>
+        <pre><code>INVITE (send)
+  ↓
+100 Trying (recv)
+  ↓
+180 Ringing (recv)
+  ↓
+200 OK (recv)
+  ↓
+ACK (send)</code></pre>
+        
+        <h3>Step 4: Set Timing and Pauses</h3>
+        <p>Add pauses between messages to simulate realistic behavior:</p>
+        <ul>
+            <li><strong>milliseconds:</strong> Quick responses (100-500ms)</li>
+            <li><strong>seconds:</strong> Call duration (10-30s typical)</li>
+        </ul>
+        
+        <h2>Using Variables in Scenarios</h2>
+        
+        <p>Variables make scenarios reusable and dynamic:</p>
+        
+        <h3>Common Variables:</h3>
+        <ul>
+            <li><code>[service]</code> - Called party number</li>
+            <li><code>[field0]</code> - Caller party number</li>
+            <li><code>[remote_ip]</code> - Remote IP address</li>
+            <li><code>[remote_port]</code> - Remote port</li>
+            <li><code>[local_ip]</code> - Local IP address</li>
+            <li><code>[local_port]</code> - Local port</li>
+        </ul>
+        
+        <h3>Example INVITE with Variables:</h3>
+        <pre><code>INVITE sip:[service]@[remote_ip]:[remote_port] SIP/2.0
+Via: SIP/2.0/UDP [local_ip]:[local_port]
+From: <sip:[field0]@[local_ip]>
+To: <sip:[service]@[remote_ip]>
+Contact: <sip:[field0]@[local_ip]:[local_port]>
+Call-ID: [call_id]
+CSeq: 1 INVITE</code></pre>
+        
+        <h2>Building Common Scenarios</h2>
+        
+        <h3>Basic UAC Call Scenario</h3>
+        <p>A simple outbound call:</p>
+        <ol>
+            <li>Send INVITE</li>
+            <li>Receive 100 Trying (optional)</li>
+            <li>Receive 180 Ringing (optional)</li>
+            <li>Receive 200 OK</li>
+            <li>Send ACK</li>
+            <li>Pause (call duration)</li>
+            <li>Send BYE</li>
+            <li>Receive 200 OK</li>
+        </ol>
+        
+        <h3>Basic UAS Call Scenario</h3>
+        <p>Answering inbound calls:</p>
+        <ol>
+            <li>Receive INVITE</li>
+            <li>Send 100 Trying</li>
+            <li>Send 180 Ringing</li>
+            <li>Pause (ring duration)</li>
+            <li>Send 200 OK</li>
+            <li>Receive ACK</li>
+            <li>Pause (call duration)</li>
+            <li>Receive BYE</li>
+            <li>Send 200 OK</li>
+        </ol>
+        
+        <h2>Advanced Features</h2>
+        
+        <h3>Regular Expressions</h3>
+        <p>Use regex to validate received messages:</p>
+        <pre><code><recv request="INVITE" regexp_match=".*audio.*">
+  <!-- Only accept INVITEs with audio in SDP -->
+</recv></code></pre>
+        
+        <h3>Conditional Actions</h3>
+        <p>Execute different paths based on responses:</p>
+        <pre><code><recv response="200" next="continue">
+<recv response="486" next="busy">
+<recv response="404" next="not_found"></code></pre>
+        
+        <h3>Custom Headers</h3>
+        <p>Add custom SIP headers:</p>
+        <pre><code>X-Custom-Header: MyValue
+User-Agent: easySIPp Test Client</code></pre>
+        
+        <h2>Exporting and Using Your Scenario</h2>
+        
+        <h3>From easySIPp Interface:</h3>
+        <ol>
+            <li>Click "Save" after building your scenario</li>
+            <li>Give it a descriptive name</li>
+            <li>It will appear in the XML dropdown for UAC/UAS</li>
+        </ol>
+        
+        <h3>From Standalone Generator:</h3>
+        <ol>
+            <li>Click "Export XML"</li>
+            <li>Save the file (e.g., <code>my_scenario.xml</code>)</li>
+            <li>Upload to easySIPp via the interface</li>
+        </ol>
+        
+        <h2>Testing Your Scenario</h2>
+        
+        <p><strong>Step 1:</strong> Preview the call flow:</p>
+        <ul>
+            <li>Select your custom scenario</li>
+            <li>Click "Preview Combined XML Call Flow"</li>
+            <li>Verify the message sequence is correct</li>
+        </ul>
+        
+        <p><strong>Step 2:</strong> Run a small test:</p>
+        <ul>
+            <li>Set Total Calls to 1-5</li>
+            <li>Set CPS to 1</li>
+            <li>Monitor for errors</li>
+        </ul>
+        
+        <p><strong>Step 3:</strong> Scale up:</p>
+        <ul>
+            <li>Once verified, increase call volume</li>
+            <li>Adjust CPS as needed</li>
+        </ul>
+        
+        <h2>Best Practices</h2>
+        
+        <ul>
+            <li><strong>Start simple:</strong> Begin with basic scenarios before adding complexity</li>
+            <li><strong>Use variables:</strong> Make scenarios reusable across different environments</li>
+            <li><strong>Add comments:</strong> Document complex logic in XML comments</li>
+            <li><strong>Test incrementally:</strong> Verify each message addition works</li>
+            <li><strong>Follow SIP standards:</strong> Ensure proper SIP message formatting</li>
+            <li><strong>Include error handling:</strong> Plan for unexpected responses</li>
+        </ul>
+        
+        <h2>Common Mistakes to Avoid</h2>
+        
+        <ul>
+            <li><strong>Missing ACK:</strong> Always send ACK after receiving 200 OK to INVITE</li>
+            <li><strong>Incorrect CSeq:</strong> CSeq must increment for each new request</li>
+            <li><strong>Missing Contact header:</strong> Required for proper routing</li>
+            <li><strong>Wrong message order:</strong> Follow proper SIP call flow sequences</li>
+            <li><strong>Hardcoded IPs:</strong> Use variables instead for flexibility</li>
+        </ul>
+        
+        <h2>Troubleshooting</h2>
+        
+        <h3>Issue: Scenario fails immediately</h3>
+        <p><strong>Solution:</strong> Check SIPp output for XML parsing errors. Verify:</p>
+        <ul>
+            <li>All tags are properly closed</li>
+            <li>Mandatory headers are present</li>
+            <li>Message sequence is logical</li>
+        </ul>
+        
+        <h3>Issue: Calls timeout</h3>
+        <p><strong>Solution:</strong> Ensure:</p>
+        <ul>
+            <li>Expected responses match what's actually sent</li>
+            <li>Timing/pauses are realistic</li>
+            <li>Network connectivity is working</li>
+        </ul>
+        
+        <h2>Next Steps</h2>
+        
+        <p>Now that you can create custom scenarios, explore:</p>
+        <ul>
+            <li><a href="customizing-call-flows.html">Customizing Call Flows</a> - Advanced call flow patterns</li>
+            <li><a href="advanced-testing.html">Advanced Load Testing</a> - Using scenarios for performance testing</li>
+            <li><a href="best-practices.html">Testing Best Practices</a> - Industry standards and tips</li>
+        </ul>
+        
+        <h2>Summary</h2>
+        
+        <p>In this tutorial, you learned:</p>
+        <ul>
+            <li>How to use the visual XML scenario builder</li>
+            <li>Building basic UAC and UAS scenarios</li>
+            <li>Using variables for reusable scenarios</li>
+            <li>Advanced features like regex and conditionals</li>
+            <li>Best practices and common pitfalls</li>
+        </ul>
+        
+        <p>You can now create custom SIPp scenarios tailored to your specific testing needs!</p>
+        
+        <!-- Article Navigation -->
+        <div class="article-nav">
+            <a href="/tutorials/getting-started/" class="article-nav-item">
+                <div class="article-nav-label">← Previous</div>
+                <div class="article-nav-title">Getting Started</div>
+            </a>
+            <a href="/tutorials/advanced-sip-load-testing/" class="article-nav-item">
+                <div class="article-nav-label">Next Tutorial →</div>
+                <div class="article-nav-title">Advanced SIP Load Testing</div>
+            </a>
+        </div>
+        
+    </div>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <span class="logo-text">easySIPp</span>
+                    </div>
+                    <p class="footer-tagline">SIP Testing, Simplified.</p>
+                    <div class="footer-social">
+                        <a href="https://github.com/kiran-daware/easySIPp" class="social-link" target="_blank">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM252.8 8c-138.7 0-244.8 105.3-244.8 244 0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1 100-33.2 167.8-128.1 167.8-239 0-138.7-112.5-244-251.2-244zM105.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+                        </a>
+                        <a href="https://hub.docker.com/r/krndwr/easysipp" class="social-link" target="_blank">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M349.9 236.3l-66.1 0 0-59.4 66.1 0 0 59.4zm0-204.3l-66.1 0 0 60.7 66.1 0 0-60.7zm78.2 144.8l-66.1 0 0 59.4 66.1 0 0-59.4zM271.8 104.7l-66.1 0 0 60.1 66.1 0 0-60.1zm78.1 0l-66.1 0 0 60.1 66.1 0 0-60.1zm276.8 100c-14.4-9.7-47.6-13.2-73.1-8.4-3.3-24-16.7-44.9-41.1-63.7l-14-9.3-9.3 14c-18.4 27.8-23.4 73.6-3.7 103.8-8.7 4.7-25.8 11.1-48.4 10.7l-434.7 0c-8.7 50.8 5.8 116.8 44 162.1 37.1 43.9 92.7 66.2 165.4 66.2 157.4 0 273.9-72.5 328.4-204.2 21.4 .4 67.6 .1 91.3-45.2 1.5-2.5 6.6-13.2 8.5-17.1l-13.3-8.9zM115.6 176.8l-66 0 0 59.4 66.1 0 0-59.4-.1 0zm78.1 0l-66.1 0 0 59.4 66.1 0 0-59.4zm78.1 0l-66.1 0 0 59.4 66.1 0 0-59.4zm-78.1-72.1l-66.1 0 0 60.1 66.1 0 0-60.1z"/></svg>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4 class="footer-heading">Product</h4>
+                        <a href="/#features" class="footer-link">Features</a>
+                        <a href="/#screenshots" class="footer-link">Screenshots</a>
+                        <a href="https://github.com/kiran-daware/easySIPp/releases" class="footer-link" target="_blank">Releases</a>
+                    </div>
+                    
+                    <div class="footer-column">
+                        <h4 class="footer-heading">Resources</h4>
+                        <a href="https://kiran-daware.github.io/sipp-xml/" class="footer-link" target="_blank">XML Builder</a>
+                        <a href="/tutorials/" class="footer-link">Tutorials</a>
+                    </div>
+                    
+                    <div class="footer-column">
+                        <h4 class="footer-heading">Community</h4>
+                        <a href="https://github.com/kiran-daware/easySIPp/issues" class="footer-link" target="_blank">Report Issue</a>
+                        <a href="https://github.com/kiran-daware/easySIPp/blob/main/LICENSE" class="footer-link" target="_blank">License</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p class="footer-copyright">
+                    © 2026 easySIPp. Made with ❤️ by <a href="https://dkiran.net" target="_blank">Kiran Daware</a>
+                </p>
+                <div class="footer-meta">
+                    <span>Licensed under GPLv3</span>
+                    <span>•</span>
+                    <span>Version 2.0.0</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- JavaScript -->
+    <script src="/static/js/script.js"></script>
+
+    <!-- Footer End -->
+</body>
+</html>
