@@ -71,6 +71,10 @@
         </div>
     </section>
     
+
+
+
+
     <!-- Article Content -->
     <div class="article-content">
         
@@ -83,15 +87,16 @@
         <h2>Prerequisites</h2>
         <p>Before you begin, make sure you have:</p>
         <ul>
-            <li>Docker installed on your system (recommended) OR</li>
-            <li>Python 3.8+ for manual installation</li>
+            <li>Docker installed on your Linux system (recommended) <br />
+                (there are some issues while sharing network interfaces to SIPp in Windows docker)</li>
             <li>Basic understanding of SIP/VoIP concepts (helpful but not required)</li>
-            <li>Two machines or network interfaces for testing (UAC and UAS)</li>
+            <li>A SIP server reachable from your linux system where easySIPp is installed</li>
         </ul>
         
         <h2>Installation Methods</h2>
         
         <h3>Method 1: Docker Installation (Recommended)</h3>
+        <h4>Quick Start - Initial installation</h4>
         <p>
             Docker provides the fastest and easiest way to get started with easySIPp. All dependencies are included in the container.
         </p>
@@ -101,14 +106,40 @@
         
         <p><strong>Step 2:</strong> Run the container:</p>
         <pre><code>docker run -dt --network host --name easysipp krndwr/easysipp</code></pre>
+        <p>This creates a docker container with name <q>easysipp</q> - as it was passed in <code>--name easysipp</code> flag.</p>
         
         <p><strong>Step 3:</strong> Access the web interface:</p>
-        <p>Open your browser and navigate to <code>http://localhost:8080</code></p>
+        <p>Open your browser and navigate to <code>http://localhost:8080</code> or <code>http://&lt;ip-of-your-linux-system&gt;:8080</code></p>
         
         <blockquote>
             <p><strong>Note:</strong> The <code>--network host</code> flag allows easySIPp to access your network interfaces directly, which is necessary for SIP testing.</p>
         </blockquote>
+
+        <h4>Daily Usage</h4>
+
+        <p>Start container (after stopping or reboot)</p>
+        <pre><code>docker start easysipp</code></pre>
         
+        <p>Stop container</p>
+        <pre><code>docker stop easysipp</code></pre>
+
+        <h4>Update to Latest Version</h4>
+
+        <blockquote>
+            <p><strong>Warning:</strong> Running <code>docker rm easysipp</code> will permanently delete existing data from the easysipp container including modified or uploaded XML files. Consider backing up important files first.</p>
+        </blockquote>
+        <pre><code>docker stop easysipp
+docker rm easysipp     # All existing data (like your modified or uploaded xml files) will be lost
+docker pull krndwr/easysipp:latest
+docker run -dt --network host --name easysipp krndwr/easysipp</code></pre>
+
+        <h4>Complete Removal</h4>
+
+        <pre><code>docker stop easysipp
+docker rm easysipp     # All existing data (like your modified or uploaded xml files) will be lost
+docker rmi krndwr/easysipp</code></pre>
+
+        <!-- manual installation script not ready yet 
         <h3>Method 2: Manual Installation</h3>
         <p>If you prefer not to use Docker, you can install easySIPp manually:</p>
         
@@ -122,7 +153,9 @@ cd easySIPp</code></pre>
         
         <p><strong>Step 3:</strong> Access the web interface:</p>
         <p>Open your browser and navigate to <code>http://localhost:8000</code></p>
-        
+
+        <!- - Manual installation update when ready -->
+
         <h2>Understanding the Interface</h2>
         
         <p>When you first access easySIPp, you'll see the main dashboard with two panels:</p>
@@ -130,21 +163,29 @@ cd easySIPp</code></pre>
         <h3>UAC (User Agent Client) Panel</h3>
         <p>The left panel configures the calling party:</p>
         <ul>
-            <li><strong>UAC Configuration:</strong> Select or create UAC profiles</li>
+            <li><strong>UAC Configuration:</strong> Select a UAC profile to load and modify</li>
             <li><strong>UAC XML:</strong> Choose the SIPp scenario file</li>
-            <li><strong>Remote:</strong> IP address and port of the UAS (destination)</li>
+            <li><strong>Remote:</strong> IP address and port of the SIP server or UAS (destination)</li>
             <li><strong>Local:</strong> IP address and port for UAC to bind to</li>
             <li><strong>Protocol:</strong> UDP or TCP</li>
             <li><strong>Total Calls:</strong> Number of calls to make</li>
             <li><strong>CPS:</strong> Calls per second (rate limiting)</li>
+            <li><strong>More Options:</strong>
+                <ul>
+                    <li><strong>Dialed Number:</strong> Injects this dialed number in your selected SIPp scenario xml</li>
+                    <li><strong>Calling Party Number:</strong> Injects this calling number in your selected SIPp scenario xml</li>
+                    <li><strong>CSV input file:</strong> If your xml supports csv injection using -inf option of SIPp</li>
+                    <li><strong>Stun Server:</strong> If your docker system is behind a NAT</li>
+                </ul>
+            </li>
         </ul>
         
         <h3>UAS (User Agent Server) Panel</h3>
         <p>The right panel configures the receiving party:</p>
         <ul>
-            <li><strong>UAS Configuration:</strong> Select or create UAS profiles</li>
+            <li><strong>UAS Configuration:</strong> Select a UAS profile to load and modify</li>
             <li><strong>UAS XML:</strong> Choose the SIPp scenario file</li>
-            <li><strong>Remote:</strong> IP address of the UAC (if needed)</li>
+            <li><strong>Remote:</strong> IP address and port of the SIP server or UAC (remote)</li>
             <li><strong>Local:</strong> IP address and port for UAS to listen on</li>
             <li><strong>Protocol:</strong> UDP or TCP</li>
         </ul>
@@ -157,18 +198,17 @@ cd easySIPp</code></pre>
         <p><strong>Step 1:</strong> Configure the UAC panel:</p>
         <ul>
             <li>UAC XML: Select <code>uac_basic.xml</code></li>
-            <li>Remote: Enter your SIP server IP (e.g., <code>192.168.1.100</code>)</li>
-            <li>Remote Port: <code>5060</code></li>
-            <li>Local: Enter your machine's IP</li>
+            <li>Remote: Enter remote SIP server IP (e.g., <code>192.168.1.100</code>) and Port e.g. <code>5060</code></li>
+            <li>Local: Enter your machine's IP (e.g. <code>192.168.1.2</code>) and Port e.g. <code>5060</code></li>
             <li>Total Calls: <code>5</code> (start small)</li>
             <li>CPS: <code>1</code></li>
         </ul>
         
-        <p><strong>Step 2:</strong> Click "Preview Combined XML Call Flow" to visualize the test</p>
+        <p><strong>Step 2:</strong> Click the second small icon (<b>&equiv;</b>) next to select <b>UAC XML</b> option to visualize the test</p>
         <p>This shows you the SIP message sequence that will be executed.</p>
         
         <p><strong>Step 3:</strong> Click "Run UAC" to start the test</p>
-        <p>You'll see real-time output showing the test progress and results.</p>
+        <p>You'll see the running sipp process on the section below it. You can click on "CheckOutput" button for real-time output showing the test progress and results, along with the control buttons.</p>
         
         <h3>UAC + UAS Test</h3>
         <p>For a complete test with both calling and receiving parties:</p>
@@ -178,66 +218,44 @@ cd easySIPp</code></pre>
         <p><strong>Step 2:</strong> Configure UAS panel:</p>
         <ul>
             <li>UAS XML: Select <code>uas_basic.xml</code></li>
-            <li>Local: Enter your machine's IP</li>
-            <li>Port: <code>5062</code> (different from UAC)</li>
+            <li>Remote: Enter remote SIP server IP (e.g., <code>192.168.1.100</code>) and Port e.g. <code>5060</code></li>
+            <li>Local: Enter your machine's IP (e.g. <code>192.168.1.2</code>) and Port e.g. <code>5062</code> (different from UAC)</li>
         </ul>
         
-        <p><strong>Step 3:</strong> Update UAC Remote to point to UAS:</p>
-        <ul>
-            <li>Remote: Same IP as UAS Local</li>
-            <li>Remote Port: <code>5062</code></li>
-        </ul>
-        
-        <p><strong>Step 4:</strong> Click "Run UAS" first, then "Run UAC"</p>
+        <p><strong>Step 3:</strong> Click "Run UAS" first, then "Run UAC"</p>
         
         <blockquote>
             <p><strong>Best Practice:</strong> Always start the UAS before the UAC so it's ready to receive calls.</p>
         </blockquote>
         
-        <h2>Monitoring Your Test</h2>
+        <h2>Monitoring and Controlling Your Tests</h2>
         
-        <p>Once your test is running, easySIPp provides real-time monitoring:</p>
+        <p>Once your test is running, you can see the running SIPp processes in the bottom half of the dashboard. Each running SIPp procces also has a "<b>Kill</b>" button and a "<b>CheckOutput</b>" button.</p>
+        <p>Upon clicking the "CheckOutput" button, a new page will be opened, which shows -</p>
         <ul>
-            <li><strong>Call Statistics:</strong> Successful calls, failed calls, current CPS</li>
-            <li><strong>SIPp Output:</strong> Live console output from SIPp</li>
             <li><strong>Control Options:</strong> Pause, resume, or stop tests</li>
             <li><strong>Rate Adjustment:</strong> Increase or decrease CPS during the test</li>
+            <li><strong>SIPp Output:</strong> Live console output from SIPp</li>
+            <li><strong>Call Statistics:</strong> Successful calls, failed calls, current CPS</li>
         </ul>
-        
-        <h2>Understanding Test Results</h2>
-        
-        <p>After your test completes, you'll see:</p>
-        <ul>
-            <li><strong>Total calls:</strong> Number of calls attempted</li>
-            <li><strong>Successful calls:</strong> Calls completed successfully</li>
-            <li><strong>Failed calls:</strong> Calls that failed (with reasons)</li>
-            <li><strong>Average CPS:</strong> Actual calls per second achieved</li>
-            <li><strong>Test duration:</strong> Total time taken</li>
-        </ul>
-        
+           
         <h2>Common Issues and Solutions</h2>
         
         <h3>Issue: Cannot access easySIPp web interface</h3>
-        <p><strong>Solution:</strong> Check that the Docker container or manual server is running:</p>
-        <pre><code># For Docker:
-docker ps | grep easysipp
+        <p><strong>Solution:</strong> Check that the Docker container is running:</p>
+        <pre><code>docker ps | grep easysipp
+# If container not running, start it using below
+docker start easysipp</code></pre>
 
-# For manual:
-ps aux | grep python</code></pre>
-        
-        <h3>Issue: UAC cannot reach UAS</h3>
-        <p><strong>Solution:</strong> Verify:</p>
-        <ul>
-            <li>IP addresses are correct</li>
-            <li>Ports are not blocked by firewall</li>
-            <li>UAS is running before UAC starts</li>
-        </ul>
         
         <h3>Issue: All calls fail immediately</h3>
         <p><strong>Solution:</strong> Check:</p>
         <ul>
+            <li>IP addresses are correct</li>
+            <li>Ports are not blocked by firewall</li>
+            <li>UAS is running before UAC starts</li>
             <li>XML scenario is compatible with your SIP server</li>
-            <li>Network connectivity between UAC and UAS</li>
+            <li>Network connectivity between UAC and SIP Server or UAS</li>
             <li>SIPp output for specific error messages</li>
         </ul>
         
@@ -245,16 +263,15 @@ ps aux | grep python</code></pre>
         
         <p>Now that you've run your first test, explore these topics:</p>
         <ul>
-            <li><a href="creating-xml-scenarios.html">Creating Custom XML Scenarios</a> - Build your own test scenarios</li>
-            <li><a href="understanding-interface.html">Understanding the Interface</a> - Deep dive into all features</li>
-            <li><a href="advanced-testing.html">Advanced Load Testing</a> - Scale up your tests</li>
+            <li><a href="/tutorials/creating-xml-scenarios/">Creating Custom XML Scenarios</a> - Build your own test scenarios</li>
+            <li><a href="/tutorials/advanced-sip-load-testing/">Advanced SIP Load Testing</a> - Scale up your tests</li>
         </ul>
         
         <h2>Summary</h2>
         
         <p>In this tutorial, you learned:</p>
         <ul>
-            <li>How to install easySIPp using Docker or manually</li>
+            <li>How to install easySIPp using Docker</li>
             <li>The basic interface layout (UAC and UAS panels)</li>
             <li>How to configure and run simple SIP tests</li>
             <li>How to monitor test progress and interpret results</li>
