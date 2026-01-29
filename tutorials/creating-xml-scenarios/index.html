@@ -72,7 +72,7 @@
             <div class="page-header">
                 <h1 class="page-title">Creating XML Scenarios</h1>
                 <p class="page-description">
-                    Master the visual XML builder and create complex SIPp scenarios with ease
+                    Master the Click-to-Create XML builder and create complex SIPp scenarios with just a few clicks
                 </p>
                 <div class="article-meta">
                     <span>⏱️ 15 min read</span>
@@ -88,255 +88,237 @@
         
         <h2>Introduction</h2>
         <p>
-            One of easySIPp's most powerful features is its visual XML scenario builder. Instead of manually writing SIPp XML files, 
-            you can create complex call flows through an intuitive point-and-click interface.
+            One of easySIPp's most powerful features is its Click-to-Create XML scenario builder. Instead of manually writing 
+            complex SIPp XML files, you can create sophisticated call flows (including PRACK and ReINVITE call flows) through an intuitive point-and-click interface. 
+            This tutorial will show you how to use the <strong>SIPp XML Scenario Generator</strong> to build custom scenarios 
+            without writing a single line of XML.
         </p>
         
-        <h2>Understanding SIPp XML Scenarios</h2>
+        <h2>Accessing the XML Scenario Generator</h2>
         
-        <p>SIPp XML scenarios define the sequence of SIP messages exchanged during a test. A typical scenario includes:</p>
+        <p>You can access the visual XML builder in two ways:</p>
+
+        <h3>Method 1: From easySIPp app web-interface</h3>
+        <p>Within easySIPp:</p>
         <ul>
-            <li><strong>INVITE:</strong> Initiates a call</li>
-            <li><strong>100 Trying:</strong> Provisional response</li>
-            <li><strong>180 Ringing:</strong> Call is ringing</li>
-            <li><strong>200 OK:</strong> Call accepted</li>
-            <li><strong>ACK:</strong> Acknowledgment</li>
-            <li><strong>BYE:</strong> Terminates the call</li>
+            <li>Click the <strong>"Create Xml"</strong> tab in navigation</li>
+            <li>Start creating the XML just by clicking the intuitive buttons</li>
         </ul>
+        
+        <h3>Method 2: Standalone Web Tool</h3>
+        <p>Visit: <a href="https://kiran-daware.github.io/sipp-xml/create.html" target="_blank">https://kiran-daware.github.io/sipp-xml/create.html</a></p>
+        <p>This standalone tool runs entirely in your browser and allows you to:</p>
+        <ul>
+            <li>Work offline (after first load). The xml is completely generated within your browser with client-side JavaScript.</li>
+            <li>Create scenarios from scratch with just intuitive clickable buttons</li>
+            <li>Download XML files</li>
+            <li>Upload them to easySIPp</li>
+        </ul>
+        
+        <h2>Understanding the Interface</h2>
+        
+        <p>The XML Scenario Generator has a simple, intuitive layout:</p>
+        
+        <h3>Top Controls</h3>
+        <ul>
+            <li><strong>UAC, UAS buttons:</strong> Select the type of scenario - client (UAC) or server (UAS). Once you select one of the buttons, a prompt is provided for the Name of your scenario, along with a "Start" button.</li>
+            <li><strong>Exit:</strong> Return to main page</li>
+            <li><strong>Reset:</strong> (Visible after you start creating) Click to clear the current scenario and start fresh</li>
+            
+        </ul>
+        
+        <h3>Action Buttons</h3>
+        <p>The interface guides you through the scenario creation process in real-time. By enabling only valid action buttons, it acts as a built-in safeguard against malformed logic. For example, once you send an INVITE, the UI contextually reveals the next logical steps, such as 180 Ringing or 183 Session Progress. It’s designed to be intuitive—once you start building, the flow feels natural.</p>
+
+        <h4>Automatic handling of protocol complexity - CSeq, RSeq etc</h4>
+        <p>Perhaps the most powerful feature is the automatic handling of protocol complexity. You no longer need to manually manage <strong>CSeq</strong> and <strong>RSeq</strong> sequence numbers or swap To and From headers during UAC role changes. The scenario creator handles these variables in the background, ensuring your signaling remains RFC-compliant without the manual effort.</p>
+
+        <h3>Preview Area</h3>
+        <p>On the Right side of the buttons, you'll see a real-time preview of your xml as you build it. You can even edit in this area for some minor tweaks.</p>
+        
+        <img src="/static/screenshots/easysipp_xml_builder.png" alt="Click-to-Create SIPp XML Scenarios" loading="lazy">
+
+        <h2>Creating Your First UAC Scenario</h2>
+        
+        <p>Let's create a basic UAC (client) scenario that makes a call, stays connected for 30 seconds, then hangs up.</p>
+        
+        <h3>Step 1: Select UAC Mode</h3>
+        <p>Click the <strong>"UAC"</strong> button at the top to create a client scenario.</p>
+        
+        <h3>Step 2: Click Start</h3>
+        <p>Click the <strong>"Start"</strong> button to begin your scenario.</p>
+        
+        <h3>Step 3: Send INVITE</h3>
+        <ol>
+            <li>Click <strong>"Send INVITE"</strong></li>
+            <li>Choose <strong>"invite with SDP"</strong> OR <strong>"without SDP"</strong></li>
+        </ol>
         
         <blockquote>
-            <p><strong>Note:</strong> easySIPp includes predefined scenarios for common use cases, but you can create custom scenarios for specific testing needs.</p>
+            <p><strong>What is SDP?</strong> The Session Description Protocol (SDP) is used to negotiate media capabilities between endpoints. It defines the specific audio/video codecs, IP addresses, and ports required to establish a media stream.</p>
         </blockquote>
         
-        <h2>Accessing the XML Builder</h2>
+        <h3>Step 4: Receive Provisional Responses</h3>
+        <p>Click <strong>"Recv 180"</strong> to expect a "Ringing" response from the server. And for this example, lets click on "Non-Reliable".</p>
         
-        <p>There are two ways to access the visual XML builder:</p>
+        <h3>Step 5: Receive 200 OK</h3>
+        <p>Click <strong>"Recv 200OK (invite)"</strong> to expect the call to be answered.</p>
         
-        <h3>Method 1: From easySIPp Interface</h3>
+        <h3>Step 6: Send ACK</h3>
         <ol>
-            <li>Click on the "Xml List" tab in the navigation</li>
-            <li>Browse available scenarios or click "Create Xml" to start a new one</li>
+            <li>Click <strong>"Send ACK without sdp"</strong></li>
+            <li>This acknowledges the 200 OK and establishes the call</li>
         </ol>
         
-        <h3>Method 2: Standalone XML Generator</h3>
-        <p>Visit the online tool at: <a href="https://kiran-daware.github.io/sipp-xml/" target="_blank">https://kiran-daware.github.io/sipp-xml/</a></p>
-        <p>This standalone version allows you to create scenarios and export them for use in easySIPp.</p>
-        
-        <h2>Creating Your First Custom Scenario</h2>
-        
-        <h3>Step 1: Define the Scenario Type</h3>
-        <p>Choose whether you're creating a:</p>
-        <ul>
-            <li><strong>UAC Scenario:</strong> Initiates calls (client behavior)</li>
-            <li><strong>UAS Scenario:</strong> Receives calls (server behavior)</li>
-        </ul>
-        
-        <h3>Step 2: Add SIP Messages</h3>
-        <p>Build your call flow by adding messages in sequence:</p>
-        
-        <p><strong>For UAC:</strong></p>
+        <h3>Step 7: Add Pcap audio and Call Duration</h3>
         <ol>
-            <li>Click "Add Message" → Select "send"</li>
-            <li>Choose message type: INVITE</li>
-            <li>Configure headers (From, To, Contact, etc.)</li>
-            <li>Add SDP body if needed</li>
+            <li>Click <strong>"Play Media"</strong> (inserts play_pcap_audio action in the xml)</li>
+            <li>Modify the milliseconds value and click <strong>"Pause"</strong></li>
         </ol>
         
-        <p><strong>For UAS:</strong></p>
+        <h3>Step 8: Send BYE</h3>
         <ol>
-            <li>Click "Add Message" → Select "recv"</li>
-            <li>Choose message type: INVITE</li>
-            <li>Define expected headers (optional)</li>
+            <li>Click <strong>"Send BYE"</strong> to hang up the call.</li>
+            <li>200 OK for the BYE message is automatically added.</li>        
+        </ol>
+
+        <h3>Step 9: Save Your Scenario</h3>
+        <ol>
+            <li>Scroll to the bottom</li>
+            <li>Enter a filename (e.g., <code>uac_basic_30sec</code>)</li>
+            <li>Click <strong>"Save as a new xml"</strong> or <strong>"Download xml"</strong></li>
         </ol>
         
-        <h3>Step 3: Add Responses</h3>
-        <p>After each request, add appropriate responses:</p>
-        <pre><code>INVITE (send)
-  ↓
-100 Trying (recv)
-  ↓
-180 Ringing (recv)
-  ↓
-200 OK (recv)
-  ↓
-ACK (send)</code></pre>
+        <p><strong>Congratulations!</strong> You've created your first SIPp scenario! 🎉</p>
         
-        <h3>Step 4: Set Timing and Pauses</h3>
-        <p>Add pauses between messages to simulate realistic behavior:</p>
-        <ul>
-            <li><strong>milliseconds:</strong> Quick responses (100-500ms)</li>
-            <li><strong>seconds:</strong> Call duration (10-30s typical)</li>
-        </ul>
+        <h2>Creating a UAS Scenario</h2>
         
-        <h2>Using Variables in Scenarios</h2>
+        <p>Now let's create a UAS (server) scenario that receives calls and answers them.</p>
         
-        <p>Variables make scenarios reusable and dynamic:</p>
+        <h3>Step 1: Select UAS Mode</h3>
+        <p>Click the <strong>"UAS"</strong> button at the top.</p>
         
-        <h3>Common Variables:</h3>
-        <ul>
-            <li><code>[service]</code> - Called party number</li>
-            <li><code>[field0]</code> - Caller party number</li>
-            <li><code>[remote_ip]</code> - Remote IP address</li>
-            <li><code>[remote_port]</code> - Remote port</li>
-            <li><code>[local_ip]</code> - Local IP address</li>
-            <li><code>[local_port]</code> - Local port</li>
-        </ul>
-        
-        <h3>Example INVITE with Variables:</h3>
-        <pre><code>INVITE sip:[service]@[remote_ip]:[remote_port] SIP/2.0
-Via: SIP/2.0/UDP [local_ip]:[local_port]
-From: <sip:[field0]@[local_ip]>
-To: <sip:[service]@[remote_ip]>
-Contact: <sip:[field0]@[local_ip]:[local_port]>
-Call-ID: [call_id]
-CSeq: 1 INVITE</code></pre>
-        
-        <h2>Building Common Scenarios</h2>
-        
-        <h3>Basic UAC Call Scenario</h3>
-        <p>A simple outbound call:</p>
+        <h3>Step 2: Build the Flow</h3>
         <ol>
-            <li>Send INVITE</li>
-            <li>Receive 100 Trying (optional)</li>
-            <li>Receive 180 Ringing (optional)</li>
-            <li>Receive 200 OK</li>
-            <li>Send ACK</li>
-            <li>Pause (call duration)</li>
-            <li>Send BYE</li>
-            <li>Receive 200 OK</li>
+            <li>Click <strong>"Start"</strong></li>
+            <li>Click <strong>"Recv INVITE"</strong> - Wait for incoming call</li>
+            <li>Click <strong>"Send 100"</strong> - Send "Trying" response</li>
+            <li>Click <strong>"Send 180"</strong> - Send "Ringing" response
+                <ul><li>Click "180 Not Reliable"</li>
+                <li>Click "180 without SDP"</li></ul>
+            </li>
+            <li>Click <strong>"Send 200OK (invite) with SDP"</strong> - Answer the call</li>
+            <li>Click <strong>"Recv ACK"</strong> - Expect acknowledgment</li>
+            <li>Click <strong>"Recv BYE"</strong> - Wait for caller to hang up
+                <ul><li>Flow automatically sends 200 OK</li></ul></li>
         </ol>
         
-        <h3>Basic UAS Call Scenario</h3>
-        <p>Answering inbound calls:</p>
-        <ol>
-            <li>Receive INVITE</li>
-            <li>Send 100 Trying</li>
-            <li>Send 180 Ringing</li>
-            <li>Pause (ring duration)</li>
-            <li>Send 200 OK</li>
-            <li>Receive ACK</li>
-            <li>Pause (call duration)</li>
-            <li>Receive BYE</li>
-            <li>Send 200 OK</li>
-        </ol>
+        <h3>Step 3: Save</h3>
+        <p>Name it <code>uas_basic_answer</code> and download.</p>
         
         <h2>Advanced Features</h2>
         
-        <h3>Regular Expressions</h3>
-        <p>Use regex to validate received messages:</p>
-        <pre><code><recv request="INVITE" regexp_match=".*audio.*">
-  <!-- Only accept INVITEs with audio in SDP -->
-</recv></code></pre>
+        <h3>Reliable Provisional Responses (PRACK)</h3>
         
-        <h3>Conditional Actions</h3>
-        <p>Execute different paths based on responses:</p>
-        <pre><code><recv response="200" next="continue">
-<recv response="486" next="busy">
-<recv response="404" next="not_found"></code></pre>
+        <p>For carriers that require PRACK (reliable provisional responses):</p>
         
-        <h3>Custom Headers</h3>
-        <p>Add custom SIP headers:</p>
-        <pre><code>X-Custom-Header: MyValue
-User-Agent: easySIPp Test Client</code></pre>
-        
-        <h2>Exporting and Using Your Scenario</h2>
-        
-        <h3>From easySIPp Interface:</h3>
+        <h4>UAC with PRACK:</h4>
         <ol>
-            <li>Click "Save" after building your scenario</li>
-            <li>Give it a descriptive name</li>
-            <li>It will appear in the XML dropdown for UAC/UAS</li>
+            <li>Send INVITE with SDP</li>
+            <li>Click <strong>"Recv 183"</strong> → Select <strong>"Reliable"</strong></li>
+            <li>Click <strong>"Send PRACK without sdp"</strong></li>
+            <li>Click <strong>"Recv 200OK (prack)"</strong></li>
+            <li>Continue with normal flow (Recv 200OK for INVITE, etc.)</li>
         </ol>
         
-        <h3>From Standalone Generator:</h3>
+        <h4>UAS with PRACK:</h4>
         <ol>
-            <li>Click "Export XML"</li>
-            <li>Save the file (e.g., <code>my_scenario.xml</code>)</li>
-            <li>Upload to easySIPp via the interface</li>
+            <li>Recv INVITE</li>
+            <li>Send 100</li>
+            <li>Click <strong>"Send 183"</strong> → Select <strong>"Reliable"</strong> and <strong>"with sdp"</strong></li>
+            <li>Click <strong>"Recv PRACK"</strong></li>
+            <li>Click <strong>"Send 200OK (prack) without SDP"</strong></li>
+            <li>Continue with normal flow</li>
         </ol>
         
-        <h2>Testing Your Scenario</h2>
+        <h3>Call Hold and Resume (Re-INVITE/UPDATE)</h3>
         
-        <p><strong>Step 1:</strong> Preview the call flow:</p>
-        <ul>
-            <li>Select your custom scenario</li>
-            <li>Click "Preview Combined XML Call Flow"</li>
-            <li>Verify the message sequence is correct</li>
-        </ul>
+        <p>To simulate putting a call on hold:</p>
         
-        <p><strong>Step 2:</strong> Run a small test:</p>
-        <ul>
-            <li>Set Total Calls to 1-5</li>
-            <li>Set CPS to 1</li>
-            <li>Monitor for errors</li>
-        </ul>
+        <h4>UAC Puts Call on Hold:</h4>
+        <ol>
+            <li>After call is established (after ACK)</li>
+            <li>Add pause (call active time)</li>
+            <li>Click <strong>"Send Re-INVITE"</strong> or <strong>"Send UPDATE"</strong></li>
+            <li>Select <strong>"with SDP"</strong> (modify SDP in the xml preview pane to add <code>a=sendonly</code> manually)</li>
+            <li>Click <strong>"Recv 200OK"</strong></li>
+            <li>Add another pause (hold duration)</li>
+            <li>Send another Re-INVITE/UPDATE to resume</li>
+        </ol>
         
-        <p><strong>Step 3:</strong> Scale up:</p>
-        <ul>
-            <li>Once verified, increase call volume</li>
-            <li>Adjust CPS as needed</li>
-        </ul>
+        <h4>UAS Receives Hold Request:</h4>
+        <ol>
+            <li>After call established</li>
+            <li>Click <strong>"Recv INVITE"</strong> or <strong>"Recv UPDATE"</strong></li>
+            <li>Click <strong>"Send 200OK with SDP"</strong>(modify SDP in the xml preview pane to add <code>a=sendonly</code> manually)</li>
+            <li>If INVITE: Click <strong>"Recv ACK"</strong></li>
+        </ol>
+        
+        <h3>Media Handling</h3>
+        
+        <p>The <strong>"Play Media"</strong> button inserts <code>play-pcap-audio</code> action in the xml, you may modify the pcap file name if you have uploaded any (in the XML Management tab)</p>
+
         
         <h2>Best Practices</h2>
         
+        <h3>Scenario Naming Convention</h3>
+        <pre><code># Good naming examples:
+uac_basic_30sec.xml          # Basic UAC, 30 second call
+uas_prack_hold.xml           # UAS with PRACK and hold
+uac_failover_486.xml         # UAC handling 486 Busy
+uas_early_media.xml          # UAS with early media (183)</code></pre>
+        
+        <h3>SDP Quick Reference</h3>
         <ul>
-            <li><strong>Start simple:</strong> Begin with basic scenarios before adding complexity</li>
-            <li><strong>Use variables:</strong> Make scenarios reusable across different environments</li>
-            <li><strong>Add comments:</strong> Document complex logic in XML comments</li>
-            <li><strong>Test incrementally:</strong> Verify each message addition works</li>
-            <li><strong>Follow SIP standards:</strong> Ensure proper SIP message formatting</li>
-            <li><strong>Include error handling:</strong> Plan for unexpected responses</li>
+            <li><strong>INVITE:</strong> Initial offer (Early Offer) or empty (Late Offer).</li>
+            <li><strong>200 OK (INVITE):</strong> The answer (if INVITE had SDP) or the offer (if it didn't).</li>
+            <li><strong>ACK:</strong> Typically empty, but carries the answer in Late Offer scenarios.</li>
+            <li><strong>Re-INVITE/UPDATE:</strong> Used mid-call to refresh or modify media parameters.</li>
+            <li><strong>PRACK:</strong> Used to acknowledge reliable provisional responses; usually doesn't carry media info. In standard flows, it rarely contains SDP unless specific preconditions are being met.</li>
         </ul>
+
         
-        <h2>Common Mistakes to Avoid</h2>
+        <h2>Tips for Complex Scenarios</h2>
         
         <ul>
-            <li><strong>Missing ACK:</strong> Always send ACK after receiving 200 OK to INVITE</li>
-            <li><strong>Incorrect CSeq:</strong> CSeq must increment for each new request</li>
-            <li><strong>Missing Contact header:</strong> Required for proper routing</li>
-            <li><strong>Wrong message order:</strong> Follow proper SIP call flow sequences</li>
-            <li><strong>Hardcoded IPs:</strong> Use variables instead for flexibility</li>
-        </ul>
-        
-        <h2>Troubleshooting</h2>
-        
-        <h3>Issue: Scenario fails immediately</h3>
-        <p><strong>Solution:</strong> Check SIPp output for XML parsing errors. Verify:</p>
-        <ul>
-            <li>All tags are properly closed</li>
-            <li>Mandatory headers are present</li>
-            <li>Message sequence is logical</li>
-        </ul>
-        
-        <h3>Issue: Calls timeout</h3>
-        <p><strong>Solution:</strong> Ensure:</p>
-        <ul>
-            <li>Expected responses match what's actually sent</li>
-            <li>Timing/pauses are realistic</li>
-            <li>Network connectivity is working</li>
+            <li><strong>Start simple:</strong> Build basic flow first, to get used to the interface first.</li>
+            <li><strong>Validate as you go:</strong> XML Preview feature is the easiest way to verify that your headers—like CSeq and SDP—are being generated exactly how you expect.</li>
+            <li><strong>Match production:</strong> Mirror your actual SIP server's behavior</li>
+            <li><strong>Document your flows:</strong> Use descriptive filenames</li>
+            <li><strong>Keep backups:</strong> Save working scenarios before modifying</li>
         </ul>
         
         <h2>Next Steps</h2>
         
-        <p>Now that you can create custom scenarios, explore:</p>
+        <p>Now that you can create custom XML scenarios, explore:</p>
         <ul>
-            <li><a href="customizing-call-flows.html">Customizing Call Flows</a> - Advanced call flow patterns</li>
-            <li><a href="advanced-testing.html">Advanced Load Testing</a> - Using scenarios for performance testing</li>
-            <li><a href="best-practices.html">Testing Best Practices</a> - Industry standards and tips</li>
+            <li><a href="/tutorials/advanced-sip-load-testing/">Advanced SIP Load Testing</a> - Scale up your tests</li>
         </ul>
         
         <h2>Summary</h2>
         
         <p>In this tutorial, you learned:</p>
         <ul>
-            <li>How to use the visual XML scenario builder</li>
-            <li>Building basic UAC and UAS scenarios</li>
-            <li>Using variables for reusable scenarios</li>
-            <li>Advanced features like regex and conditionals</li>
-            <li>Best practices and common pitfalls</li>
+            <li>How to access and use the visual XML Scenario Generator</li>
+            <li>Creating basic UAC and UAS scenarios with clicks</li>
+            <li>Adding advanced features (PRACK, hold/resume, error handling)</li>
+            <li>Best practices for scenario design</li>
         </ul>
         
-        <p>You can now create custom SIPp scenarios tailored to your specific testing needs!</p>
+        <p>
+            You can now create sophisticated SIPp scenarios without writing complex XML! 
+            The Click-to-Create builder handles all the complexity while you focus on the call flow logic.
+        </p>
         
         <!-- Article Navigation -->
         <div class="article-nav">
