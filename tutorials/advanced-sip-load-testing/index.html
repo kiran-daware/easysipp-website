@@ -70,7 +70,7 @@
     <section class="article-header">
         <div class="container">
             <div class="page-header">
-                <h1 class="page-title">Advanced Load Testing</h1>
+                <h1 class="page-title">Advanced SIP Load Testing</h1>
                 <p class="page-description">
                     Master high-volume testing, performance tuning, and stress testing techniques
                 </p>
@@ -101,7 +101,9 @@
             <li><strong>Success Rate:</strong> Percentage of completed calls vs. attempted</li>
             <li><strong>Response Time:</strong> Time between request and response</li>
             <li><strong>Call Duration:</strong> Average length of completed calls</li>
-            <li><strong>Failure Rate:</strong> Percentage and types of failures</li>
+            <li><strong>Failure Rate:</strong> Percentage of failures</li>
+            <li><strong>Retransmissions:</strong> Number of retried messages (indicates network issues)</li>
+            <li><strong>Timeouts:</strong> Messages that never received responses</li>
         </ul>
         
         <h3>Calculating Capacity</h3>
@@ -115,11 +117,11 @@
         <h3>Define Test Objectives</h3>
         <p>Before starting, clearly define what you're testing:</p>
         <ul>
-            <li><strong>Baseline Performance:</strong> Normal operating capacity</li>
-            <li><strong>Peak Load:</strong> Maximum expected traffic</li>
-            <li><strong>Stress Test:</strong> Breaking point identification</li>
-            <li><strong>Endurance Test:</strong> Sustained load over time</li>
-            <li><strong>Spike Test:</strong> Sudden traffic increases</li>
+            <li><strong>Baseline Performance:</strong> Normal operating capacity (80% of max)</li>
+            <li><strong>Peak Load:</strong> Maximum expected traffic during busy hour</li>
+            <li><strong>Stress Test:</strong> Breaking point identification (find the limit)</li>
+            <li><strong>Endurance Test:</strong> Sustained load over time (4-8 hours)</li>
+            <li><strong>Spike Test:</strong> Sudden traffic increases (2x-3x normal)</li>
         </ul>
         
         <h3>Test Environment Setup</h3>
@@ -131,11 +133,128 @@
         <ul>
             <li>Adequate hardware resources (CPU, RAM, network)</li>
             <li>Isolated network to avoid impacting production</li>
-            <li>Monitoring tools in place</li>
+            <li>Monitoring tools in place (easySIPp, <a href="https://www.wireshark.org" target="_blank">wireshark</a> or any tracing/packet capture tools etc.)</li>
             <li>Clear understanding of expected results</li>
+            <li>Rollback plan if test impacts other systems</li>
+        </ul>
+
+        <h2>Understanding the CheckOutput Screen</h2>
+        
+        <p>When you run a test in easySIPp, you'll see the <strong>CheckOutput</strong> button for each running SIPp process, which opens real-time SIPp statistics. This screen is basically shows the output of realtime <a href="https://sipp.readthedocs.io/en/v3.6.1/sipp.html#screens" target="_blank">SIPp statistics screen</a> and in addition it shows Control buttons to control your tests.</p>
+        
+        <img src="easySIPp-statistics-screen-and-control-buttons.png" alt="easySIPp realtime statistics screen and control buttons" loading="lazy">
+
+        <h3>Screen 1: Scenario Screen</h3>
+        <p>The main view showing call flow progress and key metrics:</p>
+        
+        <pre><code>------------------------------ Scenario Screen --------
+  Call rate (length)   Port   Total-time  Total-calls  Remote-host
+  5.0(0 ms)/1.000s   5061      72.63 s          138  127.0.0.1:5062(UDP)
+
+  0 new calls during 0.514 s period
+  15 calls (limit 15)                     Peak was 15 calls, after 13 s
+  0 Running, 33 Paused, 15 Woken up</code></pre>
+
+
+          
+        <h4>Key Metrics Explained:</h4>
+        <ul>
+            <li><strong>Call rate:</strong> Current CPS (5.0 in example)</li>
+            <li><strong>Total-time:</strong> Test duration (72.63 seconds)</li>
+            <li><strong>Total-calls:</strong> Calls attempted (138)</li>
+            <li><strong>Peak calls:</strong> Maximum concurrent calls (15)</li>
+            <li><strong>Running:</strong> Currently executing calls (0 = test paused/finished)</li>
+            <li><strong>Paused:</strong> Calls in pause/media state (33)</li>
         </ul>
         
-        <h2>Progressive Load Testing</h2>
+        <h4>Message Statistics Table:</h4>
+        <pre><code>                                 Messages  Retrans   Timeout   Unexpected-Msg
+0 :      INVITE ---------->         138       190       14
+1 :         100 <----------         0         0         0         0
+2 :         180 <----------         109       0         0         0
+3 :         200 <----------  E-RTD1 109       0         0         0
+4 :         ACK ---------->         109       0
+5 :       Pause [      0ms]         109                           0
+6 :         BYE ---------->         109       9         1
+7 :         200 <----------         108       0         0         0</code></pre>
+        
+        <h4>Understanding the Columns:</h4>
+        <ul>
+            <li><strong>Messages:</strong> Total messages sent/received at this step</li>
+            <li><strong>Retrans:</strong> Retransmissions (⚠️ High = network issues)</li>
+            <li><strong>Timeout:</strong> Messages that timed out (❌ Very bad)</li>
+            <li><strong>Unexpected-Msg:</strong> Received but not expected (check scenario)</li>
+        </ul>
+        
+        <blockquote>
+            <p><strong>Red Flag:</strong> In the example, INVITE has 190 retransmissions and 14 timeouts out of 138 calls. 
+            This indicates serious network or server capacity issues!</p>
+        </blockquote>
+        
+        <h3>Screen 2: Statistics Screen</h3>
+        <p>This screen is stacked just below the Screen 1.</p>
+        
+        <pre><code>----------------------------- Statistics Screen -------
+  Counter Name           | Periodic value            | Cumulative value
+-------------------------+---------------------------+--------------------------
+  Elapsed Time           | 00:01:12:635000           | 00:01:12:635000
+  Call Rate              |    0.000 cps              |    1.900 cps
+-------------------------+---------------------------+--------------------------
+  Outgoing calls created |        0                  |      138
+  Total Calls created    |                           |      138
+  Current Calls          |       15                  |
+-------------------------+---------------------------+--------------------------
+  Successful call        |        0                  |      108
+  Failed call            |        0                  |       15
+-------------------------+---------------------------+--------------------------
+  Response Time 1        | 00:00:02:134000           | 00:00:02:134000
+  Call Length            | 00:00:05:736000           | 00:00:05:736000</code></pre>
+        
+        <h4>Critical Metrics:</h4>
+        <ul>
+            <li><strong>Call Rate (cumulative):</strong> Average CPS over entire test (1.900)</li>
+            <li><strong>Successful call:</strong> 108 out of 138 = 78% success rate (❌ Below acceptable)</li>
+            <li><strong>Failed call:</strong> 15 failures (11% failure rate)</li>
+            <li><strong>Response Time 1:</strong> Average time to first response (2.134s)</li>
+            <li><strong>Call Length:</strong> Average call duration (5.736s)</li>
+        </ul>
+        
+        <h3>Screen 3: Repartition Screen</h3>
+        <p>Stacked below the Screen 2:</p>
+        
+        <pre><code>---------------------------- Repartition Screen -------
+  Average Response Time Repartition 1
+             0 ms <= n <         10 ms :         94
+            10 ms <= n <         20 ms :          0
+                   n >=        200 ms :         15
+
+  Average Call Length Repartition
+             0 ms <= n <         10 ms :         93
+                   n >=      10000 ms :         30</code></pre>
+        
+        <p>This shows that most calls (94) had very fast responses (< 10ms), but 15 calls took over 200ms, indicating timeouts.</p>
+        
+        <h2>Real-Time Control During Tests</h2>
+        
+        <h3>Interactive Controls</h3>
+        <p>While a test is running, you can use the Control Buttons at the Top of the screen:</p>
+        
+        <ul>
+            <li><strong>Pause/Start (p)</strong> - Pause/Start traffic (toggle)</li>
+            <li><strong>+10 CSP (*)</strong> - Increase rate by 10 CPS</li>
+            <li><strong>+1 CPS (+)</strong> - Increase rate by 1 CPS</li>
+            <li><strong>-1 CPS (-)</strong> - Decrease rate by 1 CPS</li>
+            <li><strong>-10 CPS (/)</strong> - Decrease rate by 10 CPS</li>
+            <li><strong>Quit (q)</strong> - Quit gracefully (finish active calls)</li>
+            <li><strong>Kill</strong> - Force stop immediately</li>
+        </ul>
+        
+        <blockquote>
+            <p><strong>Pro Tip:</strong> Use these buttons during a test to find the exact breaking point without running multiple tests. 
+            Watch the "Retrans" and "Timeout" columns - when these start increasing rapidly, you've reached capacity!</p>
+        </blockquote>
+        
+        <h2>1. Progressive Load Testing</h2>
         
         <h3>Step 1: Baseline Test</h3>
         <p>Start with a low call rate to establish baseline:</p>
@@ -161,8 +280,77 @@ Test 5: CPS 50  → Monitor</code></pre>
             <li>System errors or timeouts</li>
             <li>Resource exhaustion (CPU, memory, network)</li>
         </ul>
+
+        <h2>Interpreting Test Results</h2>
+
+        <blockquote style="background: #fff9e6; border-left: 4px solid #f59e0b; padding: 1rem 1.5rem; margin: 2rem 0;">
+            <p><strong>📊 Important Note:</strong> All metrics, percentages, and thresholds mentioned in this tutorial 
+            (such as "95% success rate" or "5% retransmission limit") are <strong>general guidelines and examples</strong>, 
+            not absolute rules. Your acceptable thresholds may vary based on your specific environment, use case, and 
+            business requirements. Use these numbers as starting points and adjust based on your system's characteristics 
+            and testing objectives.</p>
+        </blockquote>
+
+        <h3>Success Criteria</h3>
         
-        <h2>High Volume Testing Techniques</h2>
+        <p><strong>✅ PASS - Healthy System:</strong></p>
+        <pre><code>Successful call:  1970 / 2000 = 98.5%
+Failed call:      30
+Retrans:          < 50 total
+Timeout:          0
+Response Time:    < 200ms</code></pre>
+        
+        <p><strong>⚠️ WARNING - Needs Investigation:</strong></p>
+        <pre><code>Successful call:  1820 / 2000 = 91%
+Failed call:      180
+Retrans:          50-100
+Timeout:          1-5
+Response Time:    200-500ms</code></pre>
+        
+        <p><strong>❌ FAIL - System Overloaded:</strong></p>
+        <pre><code>Successful call:  1560 / 2000 = 78%
+Failed call:      440
+Retrans:          190  ← Very high!
+Timeout:          14   ← Critical!
+Response Time:    > 2000ms</code></pre>
+        
+        
+        <h2>Common Bottlenecks and Solutions</h2>
+        
+        <h3>High Retransmissions</h3>
+        <p><strong>Symptom:</strong> Retrans column shows high numbers</p>
+        <p><strong>Causes:</strong></p>
+        <ul>
+            <li>Network packet loss</li>
+            <li>Target system slow to respond</li>
+            <li>Firewall dropping packets</li>
+        </ul>
+        <p><strong>Solutions:</strong></p>
+        <ul>
+            <li>Check network connectivity (ping, packet capture)</li>
+            <li>Reduce CPS</li>
+            <li>Verify firewall rules</li>
+            <li>Try TCP instead of UDP</li>
+        </ul>
+        
+        <h3>Timeouts</h3>
+        <p><strong>Symptom:</strong> Timeout column > 0</p>
+        <p><strong>Causes:</strong></p>
+        <ul>
+            <li>Target system completely unresponsive</li>
+            <li>Network completely blocked</li>
+            <li>Wrong IP/port configuration</li>
+        </ul>
+        <p><strong>Solutions:</strong></p>
+        <ul>
+            <li>Verify target system is running</li>
+            <li>Check IP addresses and ports</li>
+            <li>Review target system logs</li>
+        </ul>
+        
+
+        
+        <h2>2. High Volume Testing Techniques</h2>
         
         <h3>Using Call Duration to Control Concurrency</h3>
         <pre><code># Example: Testing 1000 concurrent calls
@@ -171,55 +359,85 @@ Test 5: CPS 50  → Monitor</code></pre>
 CPS: 100
 Call Duration: 10 seconds
 Concurrent: ~1000 calls
+Risk: High stress on call setup
 
-# Option 2: Medium CPS, medium duration  
+# Option 2: Medium CPS, medium duration
 CPS: 50
 Call Duration: 20 seconds
 Concurrent: ~1000 calls
+Risk: Balanced
 
 # Option 3: Low CPS, long duration
 CPS: 17
 Call Duration: 60 seconds
-Concurrent: ~1000 calls</code></pre>
+Concurrent: ~1000 calls
+Risk: Tests endurance, not burst capacity</code></pre>
         
-        <h3>Managing System Resources</h3>
+        <h3>Monitoring During High-Load Tests</h3>
         
-        <h4>CPU Optimization</h4>
-        <ul>
-            <li>Use UDP instead of TCP (less overhead)</li>
-            <li>Minimize logging during high-load tests</li>
-            <li>Close unnecessary applications</li>
-            <li>Use multiple cores if available</li>
-        </ul>
+        <p><strong>What to watch in CheckOutput:</strong></p>
+        <ol>
+            <li><strong>First 30 seconds:</strong> Watch for immediate failures
+                <ul>
+                    <li>Check "Running" count increases properly</li>
+                    <li>Verify no timeouts in first batch</li>
+                </ul>
+            </li>
+            <li><strong>After 1 minute:</strong> Check statistics screen [2]
+                <ul>
+                    <li>Success rate should be >95%</li>
+                    <li>Current Calls should match expected concurrent</li>
+                </ul>
+            </li>
+            <li><strong>After 5 minutes:</strong> Look for degradation
+                <ul>
+                    <li>Response time increasing?</li>
+                    <li>Retransmissions creeping up?</li>
+                    <li>Peak concurrent calls steady or declining?</li>
+                </ul>
+            </li>
+        </ol>
         
-        <h4>Memory Management</h4>
-        <pre><code># Monitor memory usage during tests
-docker stats easysipp
+        
+        <h2>3. Stress Testing Patterns</h2>
+        
+        <h3>Ramp-Up Test</h3>
+        <pre><code>Minutes 0-2:   CPS 10  (warm-up, establish baseline)
+Minutes 2-4:   CPS 25  (press [*] twice)
+Minutes 4-6:   CPS 50  (press [*] twice)
+Minutes 6-8:   CPS 75  (press [*] twice)
+Minutes 8-10:  CPS 100 (press [*] twice, watch for failures)</code></pre>
+        
+        <h3>Spike Test</h3>
+        <pre><code>Minutes 0-3:   CPS 10  (baseline)
+Minutes 3-5:   CPS 100 (press [*] 9 times rapidly - spike!)
+Minutes 5-8:   CPS 10  (press [/] 9 times - recovery)
+Check: Did system recover? Are there lingering issues?</code></pre>
+        
+        <h3>Endurance Test</h3>
+        <pre><code># Run at 80% of max capacity
+If max = 50 CPS, run at 40 CPS for 4-8 hours
 
-# For manual installations
-top -p $(pgrep -f sipp)</code></pre>
-        
-        <h4>Network Tuning</h4>
-        <pre><code># Increase network buffer sizes (Linux)
-sudo sysctl -w net.core.rmem_max=26214400
-sudo sysctl -w net.core.wmem_max=26214400
+Monitor every 30 minutes:
+- Success rate still >95%?
+- Response time stable?
+- Retransmissions not increasing?
+- Memory leaks? (check target system)</code></pre>
 
-# Increase file descriptors
-ulimit -n 65536</code></pre>
-        
-        <h2>Distributed Load Testing</h2>
+
+        <h2>4. Distributed Load Testing</h2>
         
         <h3>Multi-Machine Setup</h3>
-        <p>When a single machine can't generate enough load:</p>
+        <p>When a single machine can't generate enough load: </p>
         
         <ol>
             <li>
                 <strong>Deploy multiple easySIPp instances</strong>
                 <ul>
-                    <li>Machine 1: UAC 1 (CPS 50)</li>
-                    <li>Machine 2: UAC 2 (CPS 50)</li>
-                    <li>Machine 3: UAC 3 (CPS 50)</li>
-                    <li><em>Total: 150 CPS</em></li>
+                    <li>Machine 1: UAC 1 (CPS 150)</li>
+                    <li>Machine 2: UAC 2 (CPS 150)</li>
+                    <li>Machine 3: UAC 3 (CPS 150)</li>
+                    <li><em>Total: 450 CPS</em></li>
                 </ul>
             </li>
             <li>
@@ -231,100 +449,30 @@ ulimit -n 65536</code></pre>
                 </ul>
             </li>
         </ol>
+
+
         
-        <h2>Performance Optimization</h2>
+        <h2>Managing System Resources</h3>
         
-        <h3>Scenario Optimization</h3>
+        <h3>CPU Optimization</h4>
         <ul>
-            <li><strong>Minimize pauses:</strong> Remove unnecessary delays in XML</li>
-            <li><strong>Reduce SDP size:</strong> Only include required codecs</li>
-            <li><strong>Simplify call flows:</strong> Skip optional provisional responses</li>
-            <li><strong>Use variables efficiently:</strong> Pre-calculate values when possible</li>
+            <li>Minimize logging of your SIP server during high-load tests (loggig management is currently not supported for easySIP)</li>
+            <li>Close unnecessary applications</li>
         </ul>
         
-        <h3>Protocol Selection</h3>
-        <table style="width:100%; border-collapse:collapse; margin:2rem 0;">
-            <tr style="background:#f7fafc;">
-                <th style="padding:1rem; text-align:left; border:1px solid #e2e8f0;">Protocol</th>
-                <th style="padding:1rem; text-align:left; border:1px solid #e2e8f0;">Pros</th>
-                <th style="padding:1rem; text-align:left; border:1px solid #e2e8f0;">Cons</th>
-            </tr>
-            <tr>
-                <td style="padding:1rem; border:1px solid #e2e8f0;"><strong>UDP</strong></td>
-                <td style="padding:1rem; border:1px solid #e2e8f0;">Lower overhead, higher CPS</td>
-                <td style="padding:1rem; border:1px solid #e2e8f0;">No reliability, packet loss</td>
-            </tr>
-            <tr>
-                <td style="padding:1rem; border:1px solid #e2e8f0;"><strong>TCP</strong></td>
-                <td style="padding:1rem; border:1px solid #e2e8f0;">Reliable, ordered delivery</td>
-                <td style="padding:1rem; border:1px solid #e2e8f0;">More CPU, lower CPS</td>
-            </tr>
-        </table>
+        <h3>easySIPp memory and cpu Monitoring</h3>
+        <pre><code># Monitor memory usage during tests
+docker stats easysipp</code></pre>
         
-        <p><strong>Recommendation:</strong> Use UDP for maximum performance, TCP when reliability is critical.</p>
-        
-        <h2>Real-Time Monitoring During Load Tests</h2>
-        
-        <h3>Key Metrics to Watch</h3>
-        <ul>
-            <li><strong>Success Rate:</strong> Should stay above 95%</li>
-            <li><strong>Failed Calls:</strong> Note failure reasons</li>
-            <li><strong>Response Times:</strong> Should remain consistent</li>
-            <li><strong>System Resources:</strong> CPU, memory, network usage</li>
-            <li><strong>Target System:</strong> Monitor the SUT (System Under Test)</li>
-        </ul>
-        
-        <h3>Using easySIPp's Control Screen</h3>
-        <p>During a running test, you can:</p>
-        <ul>
-            <li><strong>Increase CPS:</strong> Click "+" to add more load</li>
-            <li><strong>Decrease CPS:</strong> Click "-" to reduce load</li>
-            <li><strong>Pause:</strong> Temporarily stop new calls</li>
-            <li><strong>Stop:</strong> End the test immediately</li>
-        </ul>
-        
-        <blockquote>
-            <p><strong>Pro Tip:</strong> Use real-time rate adjustment to find the exact breaking point without running multiple tests.</p>
-        </blockquote>
-        
-        <h2>Stress Testing Patterns</h2>
-        
-        <h3>Ramp-Up Test</h3>
-        <pre><code>Minutes 0-5:   CPS 10  (warm-up)
-Minutes 5-10:  CPS 25
-Minutes 10-15: CPS 50
-Minutes 15-20: CPS 100
-Minutes 20-25: CPS 150 (find breaking point)</code></pre>
-        
-        <h3>Spike Test</h3>
-        <pre><code>Minutes 0-10:  CPS 10  (baseline)
-Minutes 10-12: CPS 200 (spike)
-Minutes 12-22: CPS 10  (recovery)
-Minutes 22-24: CPS 200 (second spike)</code></pre>
-        
-        <h3>Endurance Test</h3>
-        <pre><code># Run at 80% capacity for extended period
-CPS: 80 (if max is 100)
-Duration: 4-8 hours
-Monitor: Memory leaks, connection leaks, performance degradation</code></pre>
-        
-        <h2>Analyzing Results</h2>
-        
-        <h3>Success Criteria</h3>
-        <ul>
-            <li>✅ <strong>Pass:</strong> 95%+ success rate at target load</li>
-            <li>⚠️ <strong>Warning:</strong> 90-95% success rate (needs investigation)</li>
-            <li>❌ <strong>Fail:</strong> Below 90% success rate</li>
-        </ul>
-        
-        <h3>Common Bottlenecks</h3>
-        <ul>
-            <li><strong>CPU Bound:</strong> High CPU usage → Optimize scenarios, use UDP</li>
-            <li><strong>Memory Bound:</strong> High memory → Reduce concurrent calls</li>
-            <li><strong>Network Bound:</strong> Packet loss → Check bandwidth, MTU size</li>
-            <li><strong>Application Bound:</strong> Target system can't handle load</li>
-        </ul>
-        
+        <h3>Network Tuning</h3>
+        <pre><code># Increase network buffer sizes (Linux)
+sudo sysctl -w net.core.rmem_max=26214400
+sudo sysctl -w net.core.wmem_max=26214400
+
+# Increase file descriptors
+ulimit -n 65536</code></pre>
+
+
         <h2>Best Practices</h2>
         
         <ul>
@@ -337,50 +485,44 @@ Monitor: Memory leaks, connection leaks, performance degradation</code></pre>
             <li><strong>Test regularly:</strong> Capacity changes over time</li>
         </ul>
         
-        <h2>Troubleshooting High-Load Issues</h2>
+        <h2>Troubleshooting Checklist</h2>
         
-        <h3>Issue: Can't achieve target CPS</h3>
-        <p><strong>Solutions:</strong></p>
-        <ul>
-            <li>Check system resources (CPU, RAM, network)</li>
-            <li>Simplify XML scenarios</li>
-            <li>Use UDP instead of TCP</li>
-            <li>Distribute load across multiple machines</li>
-        </ul>
+        <h3>When Tests Fail Immediately</h3>
+        <ol>
+            <li>Check IP addresses and ports (most common issue!)</li>
+            <li>Verify target system is running</li>
+            <li>Test connectivity: <code>ping &lt;target-ip&gt;</code></li>
+            <li>Check firewall rules</li>
+            <li>Capture a wireshark pcap trace and analyze</li>
+            <li>Review XML scenario matches target expectations</li>
+        </ol>
         
-        <h3>Issue: High failure rate at moderate load</h3>
-        <p><strong>Solutions:</strong></p>
-        <ul>
-            <li>Check target system capacity</li>
-            <li>Verify network connectivity</li>
-            <li>Review SIPp error messages</li>
-            <li>Increase timeout values</li>
-        </ul>
+        <h3>When Performance Degrades</h3>
+        <ol>
+            <li>Check "Retrans" column in CheckOutput - increasing?</li>
+            <li>Check "Timeout" column - any appearing?</li>
+            <li>Monitor target system CPU/memory</li>
+            <li>Check network utilization</li>
+            <li>Review target system logs for errors</li>
+        </ol>
         
-        <h3>Issue: System becomes unresponsive</h3>
-        <p><strong>Solutions:</strong></p>
-        <ul>
-            <li>Reduce concurrent calls</li>
-            <li>Increase system resources</li>
-            <li>Check for memory leaks</li>
-            <li>Monitor file descriptor limits</li>
-        </ul>
+        <h3>When Actual CPS < Target CPS</h3>
+        <ol>
+            <li>Look for timeouts (system waiting for responses)</li>
+            <li>Check if "Failed call" is increasing</li>
+            <li>Reduce target CPS to achievable level</li>
+            <li>Fix underlying issues (timeouts, retrans) first</li>
+        </ol>
         
-        <h2>Next Steps</h2>
+        <h2>Summary</h2>
         
         <p>You now know how to:</p>
         <ul>
-            <li>✅ Plan and execute load tests</li>
-            <li>✅ Optimize for high performance</li>
-            <li>✅ Monitor and analyze results</li>
-            <li>✅ Troubleshoot common issues</li>
-        </ul>
-        
-        <p><strong>Continue learning:</strong></p>
-        <ul>
-            <li><a href="monitoring-debugging.html">Monitoring & Debugging</a></li>
-            <li><a href="best-practices.html">Testing Best Practices</a></li>
-            <li><a href="troubleshooting.html">Troubleshooting Guide</a></li>
+            <li>✅ Read and interpret the SIPp statistics screen</li>
+            <li>✅ Identify warning signs (retrans, timeouts, failures)</li>
+            <li>✅ Use real-time controls to adjust load</li>
+            <li>✅ Various techniques of VoIP/SIP load testing</li>
+            <li>✅ Diagnose common performance issues</li>
         </ul>
         
         <!-- Article Navigation -->
@@ -389,12 +531,16 @@ Monitor: Memory leaks, connection leaks, performance degradation</code></pre>
                 <div class="article-nav-label">← Previous</div>
                 <div class="article-nav-title">Creating XML Scenarios</div>
             </a>
-            <a href="monitoring-debugging.html" class="article-nav-item">
-                <div class="article-nav-label">Next Tutorial →</div>
-                <div class="article-nav-title">Monitoring & Debugging</div>
+            <a href="/tutorials/" class="article-nav-item">
+                <div class="article-nav-label">Back to →</div>
+                <div class="article-nav-title">All Tutorials</div>
             </a>
         </div>
     </div>
+
+
+
+
     
     <!-- Footer -->
     <footer class="footer">
