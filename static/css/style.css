@@ -424,7 +424,8 @@ section {
 
 .install-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    /* "Be 450px if you can, but never wider than the screen" */
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 450px), 1fr));
     gap: 2rem;
 }
 
@@ -802,9 +803,6 @@ section {
         grid-template-columns: 1fr;
     }
     
-    .install-grid {
-        grid-template-columns: 1fr;
-    }
 }
 
 @media (max-width: 768px) {
